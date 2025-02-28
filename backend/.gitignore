@@ -10,7 +10,7 @@ venv/
 .env
 *.env
 
-# Django specific
+# Django specific 
 *.log
 db.sqlite3
 /media/
