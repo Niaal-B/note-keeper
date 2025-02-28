@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Note
+from .models import Note,Profile
+from django.contrib.auth import get_user_model
 
 class UserSerailizer(serializers.ModelSerializer):
     class Meta:
@@ -19,3 +20,17 @@ class NotesSerializer(serializers.ModelSerializer):
         model = Note
         fields = ["id","title","content","created_at","author"]
         extra_kwargs = {"author": {"read_only" : True}}
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ['profile_picture']
+
+
+User = get_user_model()
+
+class UserListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'is_staff']
