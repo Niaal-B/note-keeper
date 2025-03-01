@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../styles/AdminDashboad.css"; // Fixed typo in filename
 import api from "../api";
+import { useNavigate } from "react-router-dom"; // Import for navigation
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -10,8 +11,16 @@ const AdminDashboard = () => {
   const [editUsername, setEditUsername] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate(); 
+
 
   useEffect(() => {
+    const token = localStorage.getItem("admin_access_token");
+
+    if (!token) {
+      navigate("/admin/login"); 
+      return;
+    }
     fetchUsers();
   }, []);
 
@@ -36,6 +45,12 @@ const AdminDashboard = () => {
     e.preventDefault();
     fetchUsers();
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem("admin_access_token"); 
+    navigate("/admin/login"); 
+  };
+
 
   const handleDelete = (userId) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
@@ -64,17 +79,18 @@ const AdminDashboard = () => {
   };
 
   const handleEdit = (userId) => {
+    console.log(userId)
     const token = localStorage.getItem("admin_access_token");
   
     api.put(`/api/admin/users/${userId}/`, { username: editUsername }, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((res) => {
+      .then(() => {
         setUsers(prevUsers =>
-          prevUsers.map(user => user.id === userId ? res.data : user)
+          prevUsers.map(user => user.id === userId ? {...user,username:editUsername} : user)
         );
         setIsEditing(null);
-        setEditUsername(""); // Reset edit input after saving
+        setEditUsername(""); 
       })
       .catch((err) => {
         console.error("Error updating user:", err);
@@ -86,7 +102,6 @@ const AdminDashboard = () => {
   const handleRegister = (e) => {
     e.preventDefault();
     
-    // Simple validation
     if (!newUser.username || !newUser.email || !newUser.password) {
       alert("Please fill all fields");
       return;
@@ -112,6 +127,9 @@ const AdminDashboard = () => {
       <header className="dashboard-header">
         <h1>Admin Dashboard</h1>
         <p>Manage your users from this control panel</p>
+        <button onClick={handleLogout} className="logout-button">
+          Logout
+        </button>
       </header>
 
       <div className="dashboard-content">
@@ -193,11 +211,10 @@ const AdminDashboard = () => {
             <div className="user-list">
               <div className="user-list-header">
                 <span className="col-username">Username</span>
-                <span className="col-email">Email</span>
                 <span className="col-actions">Actions</span>
               </div>
-              {users.map((user) => (
-                <div key={user.id} className="user-item">
+              {users.map((user,idx) => (
+                <div key={idx} className="user-item">
                   <div className="col-username">
                     {isEditing === user.id ? (
                       <input
@@ -210,7 +227,6 @@ const AdminDashboard = () => {
                       <span>{user.username}</span>
                     )}
                   </div>
-                  <div className="col-email">{user.email}</div>
                   <div className="col-actions">
                     {isEditing === user.id ? (
                       <div className="edit-actions">

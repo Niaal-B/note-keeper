@@ -288,3 +288,30 @@
   .error-message {
     color: var(--danger-color);
   }
+
+
+  .logout-button {
+    background-color: #d9534f; /* Red color */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .logout-button:hover {
+    background-color: #c9302c; /* Darker red */
+    transform: scale(1.05); /* Slight zoom effect */
+  }
+  
+  .logout-button:active {
+    transform: scale(0.95); /* Press effect */
+  }
+  
+  .logout-button:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(217, 83, 79, 0.8);
+  }
+  

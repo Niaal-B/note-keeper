@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api";
 import "../styles/AdminLogin.css"; // Make sure to create this CSS file
@@ -9,9 +9,18 @@ const AdminLogin = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+
+  useEffect(() => {
+    const token = localStorage.getItem("admin_access_token");
+    if (token) {
+      navigate("/admin/dashboard"); // Redirect if already logged in
+    }
+  }, [navigate])
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+
+ ;
 
     try {
       const response = await api.post("/api/admin/login/", { username, password });
