@@ -23,7 +23,7 @@ function Form({route,method}){
         try{
             const res = await api.post(route,{username,password})
             console.log(res);
-            
+            payload
             
             if (method === 'login'){
 
